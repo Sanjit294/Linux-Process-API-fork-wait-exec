@@ -1,96 +1,128 @@
-# Linux-Process-API-fork-wait-exec-
 Ex02-Linux Process API-fork(), wait(), exec()
-# Ex02-OS-Linux-Process API - fork(), wait(), exec()
+
+Ex02-OS-Linux-Process API - fork(), wait(), exec()
 Operating systems Lab exercise
 
-
-# AIM:
+AIM:
 To write C Program that uses Linux Process API - fork(), wait(), exec()
 
-# DESIGN STEPS:
-
-### Step 1:
-
+DESIGN STEPS:
+Step 1:
 Navigate to any Linux environment installed on the system or installed inside a virtual environment like virtual box/vmware or online linux JSLinux (https://bellard.org/jslinux/vm.html?url=alpine-x86.cfg&mem=192) or docker.
 
-### Step 2:
-
+Step 2:
 Write the C Program using Linux Process API - fork(), wait(), exec()
 
-### Step 3:
+Step 3:
+Test the C Program for the desired output.
+
+PROGRAM:
+C Program to print process ID and parent Process ID using Linux API system calls
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main() {
+    int pid = fork();
+
+    if (pid == 0) { 
+        printf("I am child, my PID is %d\n", getpid()); 
+        printf("My parent PID is: %d\n", getppid()); 
+        sleep(2);  // Keep child alive for verification
+    } else { 
+        printf("I am parent, my PID is %d\n", getpid()); 
+        wait(NULL); 
+    }
+}
+```
+
+
+## OUTPUT
+
+![438125620-5359ee21-187f-41a7-a96b-930b24777617](https://github.com/user-attachments/assets/bf912ea6-1b19-4099-bc2a-2adeb4ea4b7f)
+
+
+C Program to create new process using Linux API system calls fork() and exit()
+```
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+int main()
+{       int status;
+        printf("Running ps with execlp\n");
+        execl("ps", "ps", "ax", NULL);
+        wait(&status);
+        if (WIFEXITED(status))
+                printf("child exited with status of %d\n", WEXITSTATUS(status));
+        else
+                puts("child did not exit successfully\n");
+        printf("Done.\n");
+printf("Running ps with execlp. Now with path specified\n");
+        execl("/bin/ps", "ps", "ax", NULL);
+        wait(&status);
+        if (WIFEXITED(status))
+                printf("child exited with status of %d\n", WEXITSTATUS(status));
+        else
+                puts("child did not exit successfully\n");
+        printf("Done.\n");
+        exit(0);}
+  ```
+
+
+## OUTPUT
+
+![438125805-f9f18fd2-b985-4ae5-bb5d-9885dd56fbaf](https://github.com/user-attachments/assets/3f97a62c-525d-403e-a49f-c111f6dcd4ef)
+
+
+C Program to execute Linux system commands using Linux API system calls exec() family
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+int main() {
+    int status;
+    
+    printf("Running ps with execl\n");
+    if (fork() == 0) {
+        execl("ps", "ps", "-f", NULL);
+        perror("execl failed");
+        exit(1);
+    }
+    wait(&status);
+    
+    if (WIFEXITED(status)) {
+        printf("Child exited with status: %d\n", WEXITSTATUS(status));
+    } else {
+        printf("Child did not exit successfully\n");
+    }
+    
+    printf("Running ps with execlp (without full path)\n");
+    if (fork() == 0) {
+        execlp("ps", "ps", "-f", NULL);
+        perror("execlp failed");
+        exit(1);
+    }
+    wait(&status);
+    
+    if (WIFEXITED(status)) {
+        printf("Child exited for execlp with status: %d\n", WEXITSTATUS(status));
+    } else {
+        printf("Child did not exit successfully\n");
+    }
+    
+    printf("Done.\n");
+    return 0;
+}
+```
 
-Test the C Program for the desired output. 
+## OUTPUT
 
-# PROGRAM:
+![438125950-d0aeb94f-a38c-446d-a14a-92adbd0adaf5](https://github.com/user-attachments/assets/c2d3e274-c7a6-427f-b46f-b1a3dbb3d67a)
 
-## C Program to create new process using Linux API system calls fork() and getpid() , getppid() and to print process ID and parent Process ID using Linux API system calls
 
-
-
-
-
-
-
-
-
-
-
-
-
-##OUTPUT
-
-
-
-
-
-
-
-
-## C Program to execute Linux system commands using Linux API system calls exec() , exit() , wait() family
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-##OUTPUT
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# RESULT:
+RESULT:
 The programs are executed successfully.
